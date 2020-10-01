@@ -5,5 +5,5 @@
 2.  To compile the umd part in sw, use command `make <path to sw>/sw/umd/out/core/src/compiler/libnvdla_compiler/libnvdla_compiler.so`
 3. Main functions of compiler and parser are in `/umd/core/src/compiler/caffe/CaffeParser.cpp`
 4. (Not sure) Parser output: A network. Defination of class network (in `/core/include/nvdla/INetwork.h`).
-
+5. Main part of compiler is in `/umd/core/src/compiler/Compiler.cpp`, main function is `Compiler::compileInternal()`
 
