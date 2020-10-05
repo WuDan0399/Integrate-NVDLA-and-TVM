@@ -11,3 +11,11 @@
 1. Successfully compile and run ResNet-101 in docker image.
 2. Environment setup.
 3. Source code reading of parser.
+
+## Environment Setup (Virtual Platform)
+1. Use Ubuntu 14.04 (docker image for my side)
+2. Follows http://nvdla.org/vp.html.
+  2.1 If fail on VP `make install`, check the issues of vp or sw repo. There is a solution.
+  2.2 In step 2.5.1, the demo linux kernel image is in `sw/prebuilt/arm64-linux`, copy the image folder to `vp`, `cp -R <path to sw>/sw/prebuilt/arm64-linux/images <path to vp>/vp/`
+  
+## Compiler source code reading
