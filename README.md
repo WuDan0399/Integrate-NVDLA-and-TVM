@@ -20,6 +20,22 @@
   2.2 In step 2.5.1, the demo linux kernel image is in `sw/prebuilt/arm64-linux`, copy the image folder to `vp`, `cp -R <path to sw>/sw/prebuilt/arm64-linux/images <path to vp>/vp/`
   
 ## Compiler source code reading
+
+```
+> ./nvdla_compiler
+Usage: ./nvdla_compiler [-options] --prototxt <prototxt_file> --caffemodel <caffemodel_file>
+where options include:
+    -h                                                          print this help message
+    -o <outputpath>                                             outputs wisdom files in 'outputpath' directory
+    --profile <basic|default|performance|fast-math>             computation profile (default: fast-math)
+    --cprecision <fp16|int8>                                    compute precision (default: fp16)
+    --configtarget <opendla-full|opendla-large|opendla-small>   target platform (default: nv_full)
+    --calibtable <int8 calib file>                              calibration table for INT8 networks (default: 0.00787)
+    --quantizationMode <per-kernel|per-filter>                  quantization mode for INT8 (default: per-kernel)
+    --batch                                                     batch size (default: 1)
+    --informat <ncxhwx|nchw|nhwc>                               input data format (default: nhwc)
+
+```
 ```cpp
 struct TestAppArgs
 {
@@ -75,9 +91,12 @@ struct TestInfo
 NvDlaError compileProfile(const TestAppArgs* appArgs, TestInfo* i);
 \* Main Job:
 Get the compiler: nvdla::ICompiler* compiler = i->wisdom->getCompiler();
-Get target, a string: targetConfigName = appArgs->configtarget;
-Determin Profile:
-Compile:
-
+Get target, a string <opendla-full|opendla-large|opendla-small>: targetConfigName = appArgs->configtarget;
+Determine Profile, a string <basic|default|performance|fast-math> : init named profile (basic/default/performance) with default params in its constructor and exit
+Compile: use function compile of class compiler.
 *\
+NvDlaError Compiler::compile(const char *tp_name, const char *target_config_name, ILoadable **peli);
+\* Main Job: call compileInternal function*\
+NvDlaError Compiler::compileInternal(const char *tp_name, const char *target_config_name, ILoadable **peli, bool fullCompile);
+\* Main Job: call compileInternal function*\
 ```
