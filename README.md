@@ -89,14 +89,14 @@ struct TestInfo
 };
 
 NvDlaError compileProfile(const TestAppArgs* appArgs, TestInfo* i);
-\* Main Job:
+/* Function:
 Get the compiler: nvdla::ICompiler* compiler = i->wisdom->getCompiler();
 Get target, a string <opendla-full|opendla-large|opendla-small>: targetConfigName = appArgs->configtarget;
 Determine Profile, a string <basic|default|performance|fast-math> : init named profile (basic/default/performance) with default params in its constructor and exit
 Compile: use function compile of class compiler.
-*\
+*/
 NvDlaError Compiler::compile(const char *tp_name, const char *target_config_name, ILoadable **peli);
-\* Main Job: call compileInternal function*\
+// Function: call compileInternal function
 NvDlaError Compiler::compileInternal(const char *tp_name, const char *target_config_name, ILoadable **peli, bool fullCompile);
-\* Main Job: call compileInternal function*\
+/* Function: */
 ```
