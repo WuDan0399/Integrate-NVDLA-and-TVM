@@ -1,6 +1,6 @@
 # Integrate-NVDLA-and-TVM(Developing)
 
-## Some notes 
+## Some Notes 
 1. Official code for NVDLA software [sw](https://github.com/nvdla/sw). Official document [sw doc](http://nvdla.org/sw/contents.html). 
 2.  To compile the umd part in sw, use command `make <path to sw>/sw/umd/out/core/src/compiler/libnvdla_compiler/libnvdla_compiler.so`
 3. Main functions of compiler and parser are in `/umd/core/src/compiler/caffe/CaffeParser.cpp`
@@ -9,18 +9,53 @@
 6. For using nvdla_runtime to generate inference output, this will take a long time. If yo run this in a docker container, use `docker commit` to save your container, or after you exit and restart it, all message will lost.
 
 ## Current Progress:
-1. Successfully compile and run ResNet-101 in docker image.
+1. Successfully compile and run ResNet-101.
 2. Environment setup.
 3. Source code reading of parser.
 
-## Environment Setup (Virtual Platform)
-1. Use Ubuntu 14.04 (docker image for my side)
+##  <span id="built"> Environment Setup (Virtual Platform)</span>
+1. Use Ubuntu 14.04.
 2. Follows http://nvdla.org/vp.html.
-  2.1 If fail on VP `make install`, check the issues of vp or sw repo. There is a solution.
-  2.2 In step 2.5.1, the demo linux kernel image is in `sw/prebuilt/arm64-linux`, copy the image folder to `vp`, `cp -R <path to sw>/sw/prebuilt/arm64-linux/images <path to vp>/vp/`
-  
-## Compiler source code reading
 
+    2.1 If fail on VP `make install` with `error: ‘template class std::auto_ptr’ is deprecated [-Werror=deprecated-declarations]`, check the [issues #17 of vp](https://github.com/nvdla/vp/issues/17).
+  
+    2.2 In step 2.5.1, the demo linux kernel image is in `sw/prebuilt/arm64-linux`, copy the image folder to `vp`, `cp -R <path to sw>/sw/prebuilt/arm64-linux/images <path to vp>/vp/`
+
+## Another Way for Enviroment Setup - virtual platform docker image
+[Docker NVDLA VP](https://hub.docker.com/r/nvdla/vp)
+1. Start the container
+
+`docker pull nvdla/vp # pull the docker image docker`
+`run -it -v /home:/home nvdla/vp # create and start the container`
+
+2. Start NVDLA virtual simulator
+
+Inside the container: 
+`cd /usr/local/nvdla aarch64_toplevel -c aarch64_nvdla.lua # start the virtual simulator`
+\# Login the kernel with account 'root' and password 'nvdla'
+
+Install NVDLA demo kernel driver
+
+After login the kernel: 
+`mount -t 9p -o trans=virtio r /mnt # mount pwd` 
+`cd /mnt insmod drm.ko # install drm driver`
+`insmod opendla.ko # install nvdla driver`
+
+3. Exit NVDLA virtual simulator
+
+ctrl+a x
+
+## How to Run the Whole Process for Model Inference(TODO)
+If you use [docker image](#built):
+
+If you use the virtual platform built on your system:
+1. Get a caffe model and corresponding prototxt. Currently, we only success on ResNet-101. The model and prototxt can be downloaded here: [ResNet-101 download link](https://1drv.ms/u/s!ArGaVoKpkwjNg0OmwFpdewXh7If_?e=4dxQCa)
+2. 
+analysis output.dimg
+https://github.com/nvdla/sw/issues/100
+
+## Compiler source code reading
+### Usage of execuatble compiler and runtime
 ```
 > ./nvdla_compiler
 Usage: ./nvdla_compiler [-options] --prototxt <prototxt_file> --caffemodel <caffemodel_file>
@@ -35,7 +70,9 @@ where options include:
     --batch                                                     batch size (default: 1)
     --informat <ncxhwx|nchw|nhwc>                               input data format (default: nhwc)
 
+
 ```
+### Data Strcutures
 ```cpp
 struct TestAppArgs
 {
@@ -87,7 +124,9 @@ struct TestInfo
     NvU16 numBatches; // runtime's point-of-view
     NvU32 numSubmits;
 };
-
+```
+### Functions
+```
 NvDlaError compileProfile(const TestAppArgs* appArgs, TestInfo* i);
 /* Function:
 Get the compiler: nvdla::ICompiler* compiler = i->wisdom->getCompiler();
@@ -98,5 +137,6 @@ Compile: use function compile of class compiler.
 NvDlaError Compiler::compile(const char *tp_name, const char *target_config_name, ILoadable **peli);
 // Function: call compileInternal function
 NvDlaError Compiler::compileInternal(const char *tp_name, const char *target_config_name, ILoadable **peli, bool fullCompile);
-/* Function: */
+/* Function: Interface from compile function to compileInternal function */
+NvDlaError Compiler::compileInternal(Profile *profile, TargetConfig *target_config, ILoadable **peli, bool fullCompile);
 ```
