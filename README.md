@@ -50,11 +50,17 @@ ctrl+a x
 ## How to Run the Whole Process for Model Inference(TODO)
 1. Get a caffe model and corresponding prototxt. Currently, we only success on ResNet-101. The model and prototxt can be downloaded here: [ResNet-101 download link](https://1drv.ms/u/s!ArGaVoKpkwjNg0OmwFpdewXh7If_?e=4dxQCa)
 
+2. Compile the model. You can use prebuilt compiler in `sw/prebuilt/x86-ubuntu/`. Use `./nvdla_compiler -h` for futher information.
+
+3. Copy the loadable file (.nvdla) and test image to target (where nvdla_runtime located).
+
 If you use [virtual platform in docker image](#vpforbuilt):
+ Copy the loadable file (.nvdla) and image to `vp` folder.
 
 If you use the [virtual platform built on your system](#vpindocker):
-
-
+ Copy the loadable file (.nvdla) and image to `/usr/local/nvdla` folder.
+ 
+4. Use the `./nvdla_runtime` to run the model.
 
 ## Compiler source code reading
 ### Usage of execuatble compiler and runtime
