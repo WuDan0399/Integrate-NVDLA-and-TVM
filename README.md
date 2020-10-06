@@ -13,7 +13,7 @@
 2. Environment setup.
 3. Source code reading of parser.
 
-##  <span id="built"> Environment Setup (Virtual Platform)</span>
+##  <span id="vpforbuilt"> Environment Setup (Virtual Platform)</span>
 1. Use Ubuntu 14.04.
 2. Follows http://nvdla.org/vp.html.
 
@@ -21,8 +21,8 @@
   
     2.2 In step 2.5.1, the demo linux kernel image is in `sw/prebuilt/arm64-linux`, copy the image folder to `vp`, `cp -R <path to sw>/sw/prebuilt/arm64-linux/images <path to vp>/vp/`
 
-## Another Way for Enviroment Setup - virtual platform docker image
-[Docker NVDLA VP](https://hub.docker.com/r/nvdla/vp)
+## <span id="vpindocker"> Another Way for Enviroment Setup - virtual platform docker image</span>
+The vp docker image official site: [Docker NVDLA VP](https://hub.docker.com/r/nvdla/vp)
 1. Start the container
 
 `docker pull nvdla/vp # pull the docker image docker`
@@ -46,18 +46,18 @@ After login the kernel:
 ctrl+a x
 
 ## How to Run the Whole Process for Model Inference(TODO)
-If you use [docker image](#built):
-
-If you use the virtual platform built on your system:
 1. Get a caffe model and corresponding prototxt. Currently, we only success on ResNet-101. The model and prototxt can be downloaded here: [ResNet-101 download link](https://1drv.ms/u/s!ArGaVoKpkwjNg0OmwFpdewXh7If_?e=4dxQCa)
-2. 
-analysis output.dimg
-https://github.com/nvdla/sw/issues/100
+
+If you use [virtual platform in docker image](#vpforbuilt):
+
+If you use the [virtual platform built on your system](#vpindocker):
+
+
 
 ## Compiler source code reading
 ### Usage of execuatble compiler and runtime
 ```
-> ./nvdla_compiler
+> ./nvdla_compiler -h
 Usage: ./nvdla_compiler [-options] --prototxt <prototxt_file> --caffemodel <caffemodel_file>
 where options include:
     -h                                                          print this help message
@@ -69,6 +69,16 @@ where options include:
     --quantizationMode <per-kernel|per-filter>                  quantization mode for INT8 (default: per-kernel)
     --batch                                                     batch size (default: 1)
     --informat <ncxhwx|nchw|nhwc>                               input data format (default: nhwc)
+
+> ./nvdla_runtime -h
+Usage: ./nvdla_runtime [-options] --loadable <loadable_file>
+where options include:
+    -h                    print this help message
+    -s                    launch test in server mode
+    --image <file>        input jpg/pgm file
+    --normalize <value>   normalize value for input image
+    --mean <value>        comma separated mean value for input image
+    --rawdump             dump raw dimg data
 
 
 ```
