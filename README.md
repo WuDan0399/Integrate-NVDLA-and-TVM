@@ -15,11 +15,13 @@
 
 ##  <span id="vpforbuilt"> Environment Setup (Virtual Platform)</span>
 1. Use Ubuntu 14.04.
-2. Follows http://nvdla.org/vp.html.
+2. Install following [2. Using the Virtual Simulator](http://nvdla.org/vp.html).
 
-    2.1 If fail on VP `make install` with `error: ‘template class std::auto_ptr’ is deprecated [-Werror=deprecated-declarations]`, check the [issues #17 of vp](https://github.com/nvdla/vp/issues/17).
+    NOTE: If fail on VP `make install` with `error: ‘template class std::auto_ptr’ is deprecated [-Werror=deprecated-declarations]`, check the [issues #17 of vp](https://github.com/nvdla/vp/issues/17).
   
-    2.2 In step 2.5.1, the demo linux kernel image is in `sw/prebuilt/arm64-linux`, copy the image folder to `vp`, `cp -R <path to sw>/sw/prebuilt/arm64-linux/images <path to vp>/vp/`
+3. Run the virtual platform following [2.5 Running the Virtual Simulator](http://nvdla.org/vp.html#running-the-virtual-simulator)
+
+    NOTE: In step 2.5.1, the demo linux kernel image is in `sw/prebuilt/arm64-linux`, copy the image folder to `vp`, `cp -R <path to sw>/sw/prebuilt/arm64-linux/images <path to vp>/vp/`
 
 ## <span id="vpindocker"> Another Way for Enviroment Setup - virtual platform docker image</span>
 The vp docker image official site: [Docker NVDLA VP](https://hub.docker.com/r/nvdla/vp)
