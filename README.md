@@ -54,7 +54,8 @@ export TOP={sw-repo-root}/umd
 make compiler
 
 Note :
-In some cases if compiler build fails because of linking error with protobuf library then rebuild protobuf library as below
+In some cases if compiler build fails because of linking error with protobuf library then rebuild protobuf library as below 
+cd <path to sw>/sw/umd/external/protobuf-2.6
 ./configure --enable-shared
 make
 make check
