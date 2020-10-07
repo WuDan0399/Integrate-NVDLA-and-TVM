@@ -49,17 +49,46 @@ ctrl+a x
 
 ## How to change and rebuild compiler
 NVDLA Compiler can be updated using source code and rebuild as below. Ref: [modifying-nvdla-compiler](https://github.com/prasshantg/personal#modifying-nvdla-compiler)
-```shell
+```
 export TOP={sw-repo-root}/umd
 make compiler
+```
 
 Note : (FAIL on Dan's side, she use Yujie's compiled libprotobuf.a. Yujie also cannot remember how to compile)
 In some cases if compiler build fails because of linking error with protobuf library then rebuild protobuf library as below 
+```
 cd <path to sw>/sw/umd/external/protobuf-2.6
 ./configure --enable-shared
 make
 make check
 sudo make install
+```
+Note: 
+In some cases if the `make` command fails with error:
+```
+WARNING: 'aclocal-1.14' is missing on your system.
+         You should only need it if you modified 'acinclude.m4' or
+         'configure.ac' or m4 files included by 'configure.ac'.
+         The 'aclocal' program is part of the GNU Automake package:
+         <http://www.gnu.org/software/automake>
+         It also requires GNU Autoconf, GNU m4 and Perl in order to run:
+         <http://www.gnu.org/software/autoconf>
+         <http://www.gnu.org/software/m4/>
+         <http://www.perl.org/>
+```
+A simple fix of this problem is:
+1. check whether there are installed automake and aclocal
+```
+automake --version
+aclocal --version
+```
+2. softlink the existing version to the one required.
+```
+ln -s automake-<your version> automake-1.14
+ln -s aclocal-<your version>  aclocal-1.14
+e.g.
+ln -s automake-1.15 automake-1.14
+ln -s aclocal-1.15  aclocal-1.14
 ```
 
 ## How to Run the Whole Process for Model Inference(TODO)
