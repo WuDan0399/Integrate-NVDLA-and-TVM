@@ -47,6 +47,20 @@ After login the kernel:
 
 ctrl+a x
 
+## How to change and rebuild compiler
+NVDLA Compiler can be updated using source code and rebuild as below. Ref: [modifying-nvdla-compiler](https://github.com/prasshantg/personal#modifying-nvdla-compiler)
+```shell
+export TOP={sw-repo-root}/umd
+make compiler
+
+Note :
+In some cases if compiler build fails because of linking error with protobuf library then rebuild protobuf library as below
+./configure --enable-shared
+make
+make check
+sudo make install
+```
+
 ## How to Run the Whole Process for Model Inference(TODO)
 1. Get a caffe model and corresponding prototxt. Currently, we only success on ResNet-101. The model and prototxt can be downloaded here: [ResNet-101 download link](https://1drv.ms/u/s!ArGaVoKpkwjNg0OmwFpdewXh7If_?e=4dxQCa)
 
