@@ -53,7 +53,7 @@ NVDLA Compiler can be updated using source code and rebuild as below. Ref: [modi
 export TOP={sw-repo-root}/umd
 make compiler
 
-Note :
+Note : (FAIL on Dan's side, she use Yujie's compiled libprotobuf.a. Yujie also cannot remember how to compile)
 In some cases if compiler build fails because of linking error with protobuf library then rebuild protobuf library as below 
 cd <path to sw>/sw/umd/external/protobuf-2.6
 ./configure --enable-shared
