@@ -12,6 +12,7 @@
 1. Successfully compile and run ResNet-101.
 2. Environment setup.
 3. Source code reading of parser.
+4. Source code reading of compiler.
 
 ##  <span id="vpforbuilt"> Environment Setup (Virtual Platform)</span>
 1. Use Ubuntu 14.04.
@@ -50,11 +51,13 @@ ctrl+a x
 ## How to change and rebuild compiler
 NVDLA Compiler can be updated using source code and rebuild as below. Ref: [modifying-nvdla-compiler](https://github.com/prasshantg/personal#modifying-nvdla-compiler)
 ```
+cd {sw-repo-root}/umd
 export TOP={sw-repo-root}/umd
 make compiler
 ```
+The rebuilt compiler is in `./out/apps/compiler/nvdla_compiler`, copy libnvdla_compiler.so to the same folder to use the rebuilt compiler:
+`cp <path to sw>/sw/umd/out/core/src/compiler/libnvdla_compiler/libnvdla_compiler.so <path to sw>/sw/umd/out/apps/compiler/nvdla_compiler/`
 
-Note : (FAIL on Dan's side, she use Yujie's compiled libprotobuf.a. Yujie also cannot remember how to compile)
 In some cases if compiler build fails because of linking error with protobuf library then rebuild protobuf library as below 
 ```
 cd <path to sw>/sw/umd/external/protobuf-2.6
@@ -62,33 +65,6 @@ cd <path to sw>/sw/umd/external/protobuf-2.6
 make
 make check
 sudo make install
-```
-Note: 
-In some cases if the `make` command fails with error:
-```
-WARNING: 'aclocal-1.14' is missing on your system.
-         You should only need it if you modified 'acinclude.m4' or
-         'configure.ac' or m4 files included by 'configure.ac'.
-         The 'aclocal' program is part of the GNU Automake package:
-         <http://www.gnu.org/software/automake>
-         It also requires GNU Autoconf, GNU m4 and Perl in order to run:
-         <http://www.gnu.org/software/autoconf>
-         <http://www.gnu.org/software/m4/>
-         <http://www.perl.org/>
-```
-A simple fix of this problem is:
-1. check whether there are installed automake and aclocal
-```
-automake --version
-aclocal --version
-```
-2. softlink the existing version to the one required.
-```
-ln -s automake-<your version> automake-1.14
-ln -s aclocal-<your version>  aclocal-1.14
-e.g.
-ln -s automake-1.15 automake-1.14
-ln -s aclocal-1.15  aclocal-1.14
 ```
 
 ## How to Run the Whole Process for Model Inference(TODO)
@@ -134,6 +110,25 @@ where options include:
 
 
 ```
+### Functions
+```
+NvDlaError compileProfile(const TestAppArgs* appArgs, TestInfo* i);
+/* Function:
+Get the compiler: nvdla::ICompiler* compiler = i->wisdom->getCompiler();
+Get target, a string <opendla-full|opendla-large|opendla-small>: targetConfigName = appArgs->configtarget;
+Determine Profile, a string <basic|default|performance|fast-math> : init named profile (basic/default/performance) with default params in its constructor and exit
+Compile: use function compile of class compiler.
+*/
+
+NvDlaError Compiler::compile(const char *tp_name, const char *target_config_name, ILoadable **peli);
+// Function: call compileInternal function
+
+NvDlaError Compiler::compileInternal(const char *tp_name, const char *target_config_name, ILoadable **peli, bool fullCompile);
+/* Function: Interface from compile function to compileInternal function */
+
+NvDlaError Compiler::compileInternal(Profile *profile, TargetConfig *target_config, ILoadable **peli, bool fullCompile);
+```
+
 ### Data Strcutures
 ```cpp
 struct TestAppArgs
@@ -186,19 +181,4 @@ struct TestInfo
     NvU16 numBatches; // runtime's point-of-view
     NvU32 numSubmits;
 };
-```
-### Functions
-```
-NvDlaError compileProfile(const TestAppArgs* appArgs, TestInfo* i);
-/* Function:
-Get the compiler: nvdla::ICompiler* compiler = i->wisdom->getCompiler();
-Get target, a string <opendla-full|opendla-large|opendla-small>: targetConfigName = appArgs->configtarget;
-Determine Profile, a string <basic|default|performance|fast-math> : init named profile (basic/default/performance) with default params in its constructor and exit
-Compile: use function compile of class compiler.
-*/
-NvDlaError Compiler::compile(const char *tp_name, const char *target_config_name, ILoadable **peli);
-// Function: call compileInternal function
-NvDlaError Compiler::compileInternal(const char *tp_name, const char *target_config_name, ILoadable **peli, bool fullCompile);
-/* Function: Interface from compile function to compileInternal function */
-NvDlaError Compiler::compileInternal(Profile *profile, TargetConfig *target_config, ILoadable **peli, bool fullCompile);
 ```
