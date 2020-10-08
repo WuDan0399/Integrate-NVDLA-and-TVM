@@ -83,6 +83,8 @@ If you use the [virtual platform built on your system](#vpindocker):
 4. Use the `./nvdla_runtime` to run the model.
 
 ## Compiler source code reading
+### Brief overview of compiler part
+![compilerOverview](./compilerOverview.png)
 ### Usage of execuatble compiler and runtime
 ```
 > ./nvdla_compiler -h
