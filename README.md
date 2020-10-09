@@ -7,6 +7,7 @@
 4. (Not sure) Parser output: A network. Defination of class network (in `/core/include/nvdla/INetwork.h`).
 5. Main part of compiler is in `/umd/core/src/compiler/Compiler.cpp`, main function is `Compiler::compileInternal()`
 6. For using nvdla_runtime to generate inference output, this will take a long time. If yo run this in a docker container, use `docker commit` to save your container, or after you exit and restart it, all message will lost.
+7. Draw caffe model structure: http://ethereon.github.io/netscope/#/editor
 
 ## Current Progress:
 1. Successfully compile and run ResNet-101.
@@ -66,7 +67,6 @@ make
 make check
 sudo make install
 ```
-
 ## How to Run the Whole Process for Model Inference(TODO)
 1. Get a caffe model and corresponding prototxt. Currently, we only success on ResNet-101. The model and prototxt can be downloaded here: [ResNet-101 download link](https://1drv.ms/u/s!ArGaVoKpkwjNg0OmwFpdewXh7If_?e=4dxQCa)
 
