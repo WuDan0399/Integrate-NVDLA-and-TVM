@@ -30,7 +30,7 @@ The vp docker image official site: [Docker NVDLA VP](https://hub.docker.com/r/nv
 1. Start the container
 
 `docker pull nvdla/vp # pull the docker image docker`
-`run -it -v /home:/home nvdla/vp # create and start the container`
+`docker run -it -v /home:/home nvdla/vp # create and start the container`
 
 2. Start NVDLA virtual simulator
 
