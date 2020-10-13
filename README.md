@@ -14,6 +14,7 @@
 2. Environment setup.
 3. Source code reading of parser.
 4. Source code reading of compiler.
+5. Figure out the workflow of NVDLA compiler.
 
 ##  <span id="vpforbuilt"> Environment Setup (Virtual Platform)</span>
 1. Use Ubuntu 14.04.
@@ -49,7 +50,7 @@ After login the kernel:
 
 ctrl+a x
 
-## How to change and rebuild compiler
+## <span id="rebuild"> How to change and rebuild compiler</span> 
 NVDLA Compiler can be updated using source code and rebuild as below. Ref: [modifying-nvdla-compiler](https://github.com/prasshantg/personal#modifying-nvdla-compiler)
 ```
 cd {sw-repo-root}/umd
@@ -68,23 +69,19 @@ make check
 sudo make install
 ```
 ## How to Run the Whole Process for Model Inference(TODO)
-1. Get a caffe model and corresponding prototxt. Currently, we only success on ResNet-101. The model and prototxt can be downloaded here: [ResNet-101 download link](https://1drv.ms/u/s!ArGaVoKpkwjNg0OmwFpdewXh7If_?e=4dxQCa)
-
-2. Compile the model. You can use prebuilt compiler in `sw/prebuilt/x86-ubuntu/`. Use `./nvdla_compiler -h` for futher information.
-
-3. Copy the loadable file (.nvdla) and test image to target (where nvdla_runtime located).
-
-If you use [virtual platform in docker image](#vpforbuilt):
- Copy the loadable file (.nvdla) and image to `vp` folder.
-
-If you use the [virtual platform built on your system](#vpindocker):
- Copy the loadable file (.nvdla) and image to `/usr/local/nvdla` folder.
- 
-4. Use the `./nvdla_runtime` to run the model.
 
 ## Compiler source code reading
 ### Brief overview of compiler part
 ![compilerOverview](./compilerOverview.png)
+
+### Debug the compiler using gdb
+1. Build the executable compiler. [Check here for how to build a compiler on your own](#rebuild)
+2. `gdb ./nvdla_compiler`
+3. `b <the function name you want>`
+4. repeat step 3 if you want to set multiple breakpoints.
+5. `run --prototxt <prototxt file> --caffemodel <caffemodel file>`
+e.g. `run --prototxt lenet.prototxt --caffemodel lenet_iter_10000.caffemodel`
+
 ### Usage of execuatble compiler and runtime
 ```
 > ./nvdla_compiler -h
@@ -129,58 +126,4 @@ NvDlaError Compiler::compileInternal(const char *tp_name, const char *target_con
 /* Function: Interface from compile function to compileInternal function */
 
 NvDlaError Compiler::compileInternal(Profile *profile, TargetConfig *target_config, ILoadable **peli, bool fullCompile);
-```
-
-### Data Strcutures
-```cpp
-struct TestAppArgs
-{
-    std::string project;
-    std::string inputPath;
-    std::string inputName;
-    std::string outputPath;
-    std::string testname;
-    std::string testArgs;
-    std::string prototxt; // This should be folded into testArgs
-    std::string caffemodel; // This should be folded into testArgs
-    std::string cachemodel; // This should be folded into testArgs
-
-    std::string profileName; // ok here?
-    std::string profileFile;
-    std::string configtarget;
-    std::string calibTable;
-    nvdla::QuantizationMode quantizationMode;
-
-    NvU16 numBatches;
-    nvdla::DataFormat inDataFormat;
-    nvdla::DataType computePrecision;
-
-    std::map<std::string, NvF32> tensorScales;
-};
-struct TestInfo
-{
-    // common
-    nvdla::IWisdom* wisdom; //wisdom->getcompiler()
-    std::string wisdomPath;
-
-    // parse
-    std::string modelsPath;
-    std::string profilesPath;
-    std::string calibTablesPath;
-
-    // runtime
-    nvdla::IRuntime* runtime;
-    nvdla::ILoadable* compiledLoadable;
-    NvU8 *pData;
-    std::string inputImagesPath;
-    std::string inputLoadablePath;
-    std::map<std::string, NvDlaImage*> inputImages;
-    std::map<std::string, void *> inputBuffers;
-    std::map<std::string, NvDlaImage*> outputImages;
-    std::map<std::string, void *> outputBuffers;
-    std::vector<SubmitContext*> submits;
-    NvU32 timeout;
-    NvU16 numBatches; // runtime's point-of-view
-    NvU32 numSubmits;
-};
 ```
