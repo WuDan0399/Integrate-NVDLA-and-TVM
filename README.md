@@ -76,12 +76,8 @@ sudo make install
 
 ### Debug the compiler using gdb
 1. Build the executable compiler. [Check here for how to build a compiler on your own](#rebuild)
-2. `gdb ./nvdla_compiler`
-3. `b <the function name you want>`
-4. repeat step 3 if you want to set multiple breakpoints.
-5. `run --prototxt <prototxt file> --caffemodel <caffemodel file>`
+2. `gdb --args ./nvdla_compiler --prototxt lenet.prototxt --caffemodel lenet_iter_10000.caffemodel`
 
-e.g. `run --prototxt lenet.prototxt --caffemodel lenet_iter_10000.caffemodel`
 
 ### Usage of execuatble compiler and runtime
 ```
