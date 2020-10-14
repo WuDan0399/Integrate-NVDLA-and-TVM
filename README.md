@@ -126,10 +126,10 @@ NvDlaError Compiler::compileInternal(Profile *profile, TargetConfig *target_conf
 ```
 
 ## Graph Samples
-With LeNet as input
-```
-Canonical Graph
+With LeNet as input.
 
+**Canonical Graph**
+```
 {<nvdla::priv::ast::Graph<nvdla::priv::canonical_ast::Node, nvdla::priv::canonical_ast::Edge>> = {
     _vptr.Graph = 0x7ffff7d83190 <vtable for nvdla::priv::canonical_ast::Graph+16>,
     
@@ -178,7 +178,6 @@ Canonical Graph
 
     m_edge_attr_map = std::unordered_map with 9 elements = {
                           m_nodes = { std::vector of length 1, capacity 1 = {0x555555841780}, std::vector of length 1, capacity 1 = {0x555555841900}}},
-
       [0x555555845320] = {m_nodes = {
           std::vector of length 1, capacity 1 = {0x555555841650}, std::vector of length 1, capacity 1 = {0x555555841780}}}, 
       [0x555555841d60] = {m_nodes = {std::vector of length 1, capacity 1 = {
@@ -197,4 +196,63 @@ Canonical Graph
     m_next_edge_id = 9, 
     m_scored_ordering = 0x55555588a870}
 
+```
+**Canonical Node**
+Definition of protected attributes in a Canonical Node: (Line 619 in CanonicalAST.h) Nodes of paramters are written by Dan.
+```
+protected:
+        std::string     m_id; // unique within the graph
+        NvU32           m_unique_id; // id for graph ordering. u32 instead of string.
+        static NvU32    m_next_id;
+        std::string     m_name;
+        Graph*          m_containing_graph;
+        CanonicalOpType m_can_op_type; // Determine the type of operation, like conv or FC or activation.
+        CanonicalParams m_basic_can_params; //parameters of a layer like input shape and output shape
+        EdgeSequence    m_input_edges;
+        EdgeSequence    m_output_edges;
+```
+A Sample of Canonical Node:
+```
+{
+_vptr.Node = 0x7ffff7d83150 <vtable for nvdla::priv::canonical_ast::ConvolutionNode+16>, 
+
+  m_id = "n-0", 
+  m_unique_id = 0, 
+  static m_next_id = 8, 
+  m_name = "conv1", 
+  m_containing_graph = 0x5555558b6440, //indicating address of the graph object it belongs to
+  m_can_op_type = {m_e = 0, 
+    static s_c_str = 0x7ffff7a0fefa "CanonicalOpTypeEnum", 
+
+    static s_c_strs = 0x7ffff7d7cec0 <nvdla::priv::SequenceEnum<nvdla::priv::canonical_ast::CanonicalOpTypeEnum, unsigned short>::s_c_strs>, static s_num_elements = 12}, 
+
+  m_basic_can_params = {
+    _vptr.CanonicalParams = 0x7ffff7d82e58 <vtable for nvdla::priv::canonical_ast::CanonicalParams+16>}, 
+
+  m_input_edges = std::vector of length 1, capacity 1 = {0x555555841a70}, 
+ 	
+  m_output_edges = std::vector of length 1, capacity 1 = {0x555555841d60}
+ 	}
+```
+**Canonical Edge**
+Sample:
+```
+{_vptr.Edge = 0x7ffff7d83200 <vtable for nvdla::priv::canonical_ast::Edge+16>, 
+  m_id = "e-0", 
+  m_unique_id = 0, 
+  static m_next_id = 9,
+  m_containing_graph = 0x5555558b6440, 
+  m_original_tensor = 0x555555841ac0}
+```
+For `m_original_tensor`:
+```
+{<nvdla::ITensor> = {_vptr.ITensor = 0x7ffff7d93f08 <vtable for nvdla::priv::Tensor+16>}, 
+  mDimensions = {n = 64, c = 1, h = 28, w = 28},
+  mNetwork = 0x0, 
+  mName = "data", 
+  mDataFormat = {m_v = 0 '\000'}, 
+  mDataType = {m_v = 0 '\000'}, 
+  mTensorType = nvdla::kNW_INPUT, 
+  mChnlScales = std::vector of length 1, capacity 1 = {1}, 
+  mChnlOffsets = std::vector of length 0, capacity 0}
 ```
