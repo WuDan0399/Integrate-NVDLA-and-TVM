@@ -15,6 +15,7 @@
 3. Source code reading of parser.
 4. Source code reading of compiler.
 5. Figure out the workflow of NVDLA compiler.
+6. Workflow design.
 
 ##  <span id="vpforbuilt"> Environment Setup (Virtual Platform)</span>
 1. Use Ubuntu 14.04.
@@ -129,74 +130,60 @@ NvDlaError Compiler::compileInternal(Profile *profile, TargetConfig *target_conf
 With LeNet as input.
 
 **Canonical Graph**
-```
-{<nvdla::priv::ast::Graph<nvdla::priv::canonical_ast::Node, nvdla::priv::canonical_ast::Edge>> = {
-    _vptr.Graph = 0x7ffff7d83190 <vtable for nvdla::priv::canonical_ast::Graph+16>,
-    
-    m_nodes = std::set with 8 elements = {[0] = 0x555555891800, 
-      [1] = 0x5555558411b0, [2] = 0x555555891140, [3] = 0x555555841380, 
-      [4] = 0x5555558414d0, [5] = 0x555555841650, [6] = 0x555555841780, 
-      [7] = 0x555555841900}, 
-    
-    m_edges = std::set with 9 elements = {
-      [0] = 0x555555841a70, [1] = 0x555555841d60, [2] = 0x555555842070, 
-      [3] = 0x5555558423e0, [4] = 0x555555842740, [5] = 0x555555844860, 
-      [6] = 0x555555845320, [7] = 0x5555558547a0, [8] = 0x555555854a30}, 
-    
-    m_input_edges = std::vector of length 1, capacity 1 = {0x555555841a70}, 
-    
-    m_output_edges = std::vector of length 1, capacity 1 = {0x555555854a30}, 
-    
-    m_dirty = false, 
 
-    m_node_attr_map = std::unordered_map with 8 elements = {
-      [0x555555841900] = {m_edges = {
-          std::vector of length 1, capacity 1 = {0x555555854a30}, 
-          std::vector of length 1, capacity 1 = {0x5555558547a0}}}, 
-      [0x555555841780] = {m_edges = {
+{_vptr.Graph = 0x7ffff7d83190 <vtable for nvdla::priv::canonical_ast::Graph+16>, 
+         m_nodes = std::set with 8 elements = {[0] = 0x555555891800 and so on},
+      
+         m_edges = std::set with 9 elements = { [0] = 0x555555841a70 and so on}, 
+      
+         m_input_edges = std::vector of length 1, capacity 1 = {0x555555841a70}, 
+      
+         m_output_edges = std::vector of length 1, capacity 1 = {0x555555854a30}, 
+   
+         m_dirty = false, 
+         m_node_attr_map = std::unordered_map with 8 elements = {[0x555555841900] = {
+        m_edges = {std::vector of length 1, capacity 1 = {0x555555854a30}, 
+          std::vector of length 1, capacity 1 = {0x5555558547a0}}}, [0x555555841780] = {m_edges = {
           std::vector of length 1, capacity 1 = {0x5555558547a0}, 
-          std::vector of length 1, capacity 1 = {0x555555845320}}}, 
-      [0x5555558411b0] = {m_edges = {
+          std::vector of length 1, capacity 1 = {0x555555845320}}}, [0x5555558411b0] = {m_edges = {
           std::vector of length 1, capacity 1 = {0x555555842070}, 
-          std::vector of length 1, capacity 1 = {0x555555841d60}}}, 
-      [0x555555891800] = {m_edges = {
+          std::vector of length 1, capacity 1 = {0x555555841d60}}}, [0x555555891800] = {m_edges = {
           std::vector of length 1, capacity 1 = {0x555555841d60}, 
-          std::vector of length 1, capacity 1 = {0x555555841a70}}}, 
-      [0x555555841380] = {m_edges = {
+          std::vector of length 1, capacity 1 = {0x555555841a70}}}, [0x555555841380] = {m_edges = {
           std::vector of length 1, capacity 1 = {0x555555842740}, 
-          std::vector of length 1, capacity 1 = {0x5555558423e0}}}, 
-      [0x5555558414d0] = {m_edges = {
+          std::vector of length 1, capacity 1 = {0x5555558423e0}}}, [0x5555558414d0] = {m_edges = {
           std::vector of length 1, capacity 1 = {0x555555844860}, 
-          std::vector of length 1, capacity 1 = {0x555555842740}}}, 
-      [0x555555891140] = {m_edges = {
+          std::vector of length 1, capacity 1 = {0x555555842740}}}, [0x555555891140] = {m_edges = {
           std::vector of length 1, capacity 1 = {0x5555558423e0}, 
-          std::vector of length 1, capacity 1 = {0x555555842070}}}, 
-      [0x555555841650] = {m_edges = {
+          std::vector of length 1, capacity 1 = {0x555555842070}}}, [0x555555841650] = {m_edges = {
           std::vector of length 1, capacity 1 = {0x555555845320}, 
-          std::vector of length 1, capacity 1 = {0x555555844860}}}
-      }, 
+          std::vector of length 1, capacity 1 = {0x555555844860}}}}, 
+    m_edge_attr_map = std::unordered_map with 9 elements = {[0x5555558547a0] = {m_nodes = {
+          std::vector of length 1, capacity 1 = {0x555555841780}, 
+          std::vector of length 1, capacity 1 = {0x555555841900}}}, [0x555555845320] = {m_nodes = {
+          std::vector of length 1, capacity 1 = {0x555555841650}, 
+          std::vector of length 1, capacity 1 = {0x555555841780}}}, [0x555555841d60] = {m_nodes = {
+          std::vector of length 1, capacity 1 = {0x555555891800}, 
+          std::vector of length 1, capacity 1 = {0x5555558411b0}}}, [0x555555842070] = {m_nodes = {
+          std::vector of length 1, capacity 1 = {0x5555558411b0}, 
+          std::vector of length 1, capacity 1 = {0x555555891140}}}, [0x555555841a70] = {m_nodes = {
+          std::vector of length 0, capacity 1, std::vector of length 1, capacity 1 = {
+            0x555555891800}}}, [0x555555844860] = {m_nodes = {
+          std::vector of length 1, capacity 1 = {0x5555558414d0}, 
+          std::vector of length 1, capacity 1 = {0x555555841650}}}, [0x555555854a30] = {m_nodes = {
+          std::vector of length 1, capacity 1 = {0x555555841900}, 
+          std::vector of length 0, capacity 1}}, [0x5555558423e0] = {m_nodes = {
+          std::vector of length 1, capacity 1 = {0x555555891140}, 
+          std::vector of length 1, capacity 1 = {0x555555841380}}}, [0x555555842740] = {m_nodes = {
+          std::vector of length 1, capacity 1 = {0x555555841380}, 
+          std::vector of length 1, capacity 1 = {0x5555558414d0}}}}}, 
+  
+  m_next_node_id = 8, 
+  m_next_edge_id = 9, 
+  m_scored_ordering = 0x55555588a870}
 
-    m_edge_attr_map = std::unordered_map with 9 elements = {
-                          m_nodes = { std::vector of length 1, capacity 1 = {0x555555841780}, std::vector of length 1, capacity 1 = {0x555555841900}}},
-      [0x555555845320] = {m_nodes = {
-          std::vector of length 1, capacity 1 = {0x555555841650}, std::vector of length 1, capacity 1 = {0x555555841780}}}, 
-      [0x555555841d60] = {m_nodes = {std::vector of length 1, capacity 1 = {
-            0x555555891800}, std::vector of length 1, capacity 1 = {0x5555558411b0}}}, 
-      [0x555555842070] = {m_nodes = {std::vector of length 1, capacity 1 = {0x5555558411b0}, 
-          std::vector of length 1, capacity 1 = {0x555555891140}}}, [
-      [0x555555841a70] = {m_nodes = {std::vector of length 0, capacity 1, std::vector of length 1, capacity 1 = {0x555555891800}}}, 
-      [0x555555844860] = {m_nodes = {std::vector of length 1, capacity 1 = {0x5555558414d0}, std::vector of length 1, capacity 1 = {0x555555841650}}}, 
-      [0x555555854a30] = {m_nodes = {
-          std::vector of length 1, capacity 1 = {0x555555841900}, std::vector of length 0, capacity 1}}, 
-      [0x5555558423e0] = {m_nodes = {std::vector of length 1, capacity 1 = {0x555555891140}, 
-          std::vector of length 1, capacity 1 = {0x555555841380}}}, 
-      [0x555555842740] = {m_nodes = {std::vector of length 1, capacity 1 = {0x555555841380}, std::vector of length 1, capacity 1 = {0x5555558414d0}}}}}, 
 
-    m_next_node_id = 8, 
-    m_next_edge_id = 9, 
-    m_scored_ordering = 0x55555588a870}
-
-```
+  
 **Canonical Node**
 Definition of protected attributes in a Canonical Node: (Line 619 in CanonicalAST.h) Nodes of paramters are written by Dan.
 ```
