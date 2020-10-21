@@ -130,17 +130,12 @@ NvDlaError Compiler::compileInternal(Profile *profile, TargetConfig *target_conf
 With LeNet as input.
 
 **Canonical Graph**
-
+```
 {_vptr.Graph = 0x7ffff7d83190 <vtable for nvdla::priv::canonical_ast::Graph+16>, 
          m_nodes = std::set with 8 elements = {[0] = 0x555555891800 and so on},
       
          m_edges = std::set with 9 elements = { [0] = 0x555555841a70 and so on}, 
-      
-         m_input_edges = std::vector of length 1, capacity 1 = {0x555555841a70}, 
-      
-         m_output_edges = std::vector of length 1, capacity 1 = {0x555555854a30}, 
-   
-         m_dirty = false, 
+         
          m_node_attr_map = std::unordered_map with 8 elements = {[0x555555841900] = {
         m_edges = {std::vector of length 1, capacity 1 = {0x555555854a30}, 
           std::vector of length 1, capacity 1 = {0x5555558547a0}}}, [0x555555841780] = {m_edges = {
@@ -177,11 +172,15 @@ With LeNet as input.
           std::vector of length 1, capacity 1 = {0x555555841380}}}, [0x555555842740] = {m_nodes = {
           std::vector of length 1, capacity 1 = {0x555555841380}, 
           std::vector of length 1, capacity 1 = {0x5555558414d0}}}}}, 
-  
-  m_next_node_id = 8, 
-  m_next_edge_id = 9, 
-  m_scored_ordering = 0x55555588a870}
-
+      m_scored_ordering = 0x55555588a870} //Where Json File comes from    
+          
+         
+  m_next_node_id = 8, //Check, equals # of layers
+  m_next_edge_id = 9, //Check, equals # of connections between layers +2(input/output)
+  m_dirty = false, //Check
+  m_input_edges = std::vector of length 1, capacity 1 = {0x555555841a70}, //Check. a vector of the input Canonical Edges      
+  m_output_edges = std::vector of length 1, capacity 1 = {0x555555854a30},  //Check. a vector of the output Canonical Edges
+```
 
   
 **Canonical Node**
