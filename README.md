@@ -236,9 +236,166 @@ For `m_original_tensor`:
   mDimensions = {n = 64, c = 1, h = 28, w = 28},
   mNetwork = 0x0, 
   mName = "data", 
-  mDataFormat = {m_v = 0 '\000'}, 
+  mDataFormat = {m_v = 0 '\000'}, int32_t
   mDataType = {m_v = 0 '\000'}, 
   mTensorType = nvdla::kNW_INPUT, 
   mChnlScales = std::vector of length 1, capacity 1 = {1}, 
   mChnlOffsets = std::vector of length 0, capacity 0}
+```
+## Information for transformation
+1. supported type of layer
+        kCONVOLUTION = NVDLA_LAYER_TYPE_CONVOLUTION,            //!< Convolution layer
+        kFULLY_CONNECTED = NVDLA_LAYER_TYPE_FULLY_CONNECTED,    //!< Fully connected layer
+        kACTIVATION = NVDLA_LAYER_TYPE_ACTIVATION,              //!< Activation layer
+        kPOOLING = NVDLA_LAYER_TYPE_POOLING,                    //!< Pooling layer
+        kLRN = NVDLA_LAYER_TYPE_LRN,                            //!< LRN layer
+        kSCALE = NVDLA_LAYER_TYPE_SCALE,                        //!< Scale Layer
+        kBATCH_NORM = NVDLA_LAYER_TYPE_BATCH_NORM,              //!< Batch Norm Layer
+        kSOFTMAX = NVDLA_LAYER_TYPE_SOFTMAX,                    //!< SoftMax layer
+        kDECONVOLUTION = NVDLA_LAYER_TYPE_DECONVOLUTION,        //!< Deconvolution layer
+        kCONCATENATION = NVDLA_LAYER_TYPE_CONCATENATION,        //!< Concatenation layer
+        kELEMENTWISE = NVDLA_LAYER_TYPE_ELEMENTWISE,            //!< Elementwise layer
+        kSLICE = NVDLA_LAYER_TYPE_SLICE,                        //!< Slice layer
+        lt_kUNKNOWN = NVDLA_LAYER_TYPE_UNKNOWN,
+2. Parameter for different kinds of node (layer):
+    2.1 Convolutional:
+    ```cpp
+    BiasMode m_bias_mode;
+    bool m_has_bias_term;
+    Dims2 m_TL_padding;
+    Dims2 m_BR_padding;
+    Dims2 m_stride;
+    Dims2 m_dilation;
+    Dims4 m_bias_dims;
+    Dims4 m_weight_dims;
+    NvU32 m_padding_value;
+    Weights m_weights;
+    Weights m_bias_data;
+    NvU32 m_num_groups;
+    ```
+    2.2 FC:
+    ```cpp
+    BiasMode m_bias_mode;
+    bool m_has_bias_term;
+    Dims4 m_weight_dims;
+    Dims4 m_bias_dims;
+    Weights m_weights;
+    Weights m_bias_data;
+    ```
+    2.3 Activation:
+    ```cpp
+    nvdla::ActivationType m_activation_type;
+    ```
+    2.4 Pooling:
+    ```cpp
+    nvdla::PoolingType m_pool_type;
+    Dims2 m_TL_padding;
+    Dims2 m_BR_padding;
+    Dims2 m_kernel_dims;
+    Dims2 m_stride;
+    ```
+    2.5 LRN
+    ```cpp
+    NvU32 m_local_size;     //or window_size [def = 5]
+    NvF32 m_alpha;          // [def  = 1.0f]
+    NvF32 m_beta;           // [def = 0.75f]
+    NvF32 m_k;              // [def = 1.0f]
+    ```
+    2.6 Scale:
+    ```cpp
+    nvdla::ScaleMode m_mode;    // [def = nvdla::kUNIFORM]
+    bool m_has_bias_term;
+
+    // these params are extracted from ditcaffe::PowerParameter
+    Weights m_power;    // [def = 1.0f]
+    Weights m_scale;    // [def = 1.0f]
+    Weights m_shift;    // [def = 0.0f]
+
+    // extra params
+    Dims4 m_scale_dims;
+    Dims4 m_shift_dims;
+    Dims4 m_power_dims;
+    ```
+    2.7 Batch Normalization
+    ```cpp
+    nvdla::BatchNormMode m_mode;    // [def = nvdla::bUNIFORM]
+    Dims4 m_mean_dims;
+    Dims4 m_variance_dims;
+    float m_epsilon;
+    Weights m_mean;
+    Weights m_variance;
+    ```
+    2.8 Concatenate
+    ```cpp
+    NvS32 m_axis;
+    NvU32 m_concat_dim; // deprecated
+    NvU32 m_num_inputs;
+    ```
+    2.9 Split
+    ```cpp
+    NvS32 m_axis;
+    NvU32 m_num_outputs;
+    ```
+    2.10 Deconvolutional
+    ```cpp
+    BiasMode m_bias_mode;
+    bool m_has_bias_term;
+    Dims2 m_TL_padding;
+    Dims2 m_BR_padding;
+    Dims2 m_stride;
+    Dims2 m_dilation;
+    Dims4 m_bias_dims;
+    Dims4 m_weight_dims;
+    NvU32 m_padding_value;
+    Weights m_weights;
+    Weights m_bias_data;
+    NvU32 m_num_groups;
+    ```
+    2.11 Element-wise
+    ```cpp
+    nvdla::ElementWiseOperation m_type;   // [def = nvdla::kSUM]
+    bool m_has_stable_prod_grad;
+    ```
+3. Edge
+```cpp
+        std::string m_id; // unique within the graph
+        NvU32           m_unique_id; // id for graph ordering. u32 instead of string.
+        static NvU32    m_next_id;
+        Graph*   m_containing_graph;
+        Tensor*  m_original_tensor;
+```
+4.
+```
+enum BiasMode
+{
+    bNONE    = NVDLA_BIAS_MODE_NONE,          //!< no bias
+    bUNIFORM = NVDLA_BIAS_MODE_UNIFORM,       //!< identical coefficients across all elements of the tensor
+    bCHANNEL = NVDLA_BIAS_MODE_CHANNEL,       //!< per-channel coefficients
+    bm_ELEMENTWISE = NVDLA_BIAS_MODE_ELEMENTWISE //!< elementwise coefficients
+};
+template<> inline int EnumMax<BiasMode>() { return 4; } // used by checkers
+
+enum ScaleMode
+{
+    sUNKNOWN = NVDLA_SCALE_MODE_UNKNOWN,       //!< unknown scale mode
+    sUNIFORM = NVDLA_SCALE_MODE_UNIFORM,       //!< identical coefficients across all elements of the tensor
+    sCHANNEL = NVDLA_SCALE_MODE_CHANNEL,       //!< per-channel coefficients
+    sm_ELEMENTWISE = NVDLA_SCALE_MODE_ELEMENTWISE //!< elementwise coefficients
+};
+template<> inline int EnumMax<ScaleMode>() { return 4; } // used by checkers
+
+enum BatchNormMode
+{
+    bnUNIFORM = NVDLA_BATCH_NORM_MODE_UNIFORM,       //!<< identical coefficients across all elements of the tensor
+    bnm_CHANNEL = NVDLA_BATCH_NORM_MODE_CHANNEL,    //!< per-channel coefficients
+};
+template<> inline int EnumMax<BatchNormMode>() { return 2; } // used by checkers
+
+enum ElementWiseOperation
+{
+    kSUM = NVDLA_ELEMENTWISE_OPERATION_SUM,    //!< sum of the two elements
+    kPROD = NVDLA_ELEMENTWISE_OPERATION_PROD,  //!< product of the two elements
+    kMIN = NVDLA_ELEMENTWISE_OPERATION_MIN,    //!< minimum of the two elements
+    ew_kMAX = NVDLA_ELEMENTWISE_OPERATION_MAX  //!< maximum of the two elements
+};
 ```
