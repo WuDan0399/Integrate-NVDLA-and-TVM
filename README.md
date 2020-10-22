@@ -244,6 +244,7 @@ For `m_original_tensor`:
 ```
 ## Information for transformation
 1. supported type of layer
+```
         kCONVOLUTION = NVDLA_LAYER_TYPE_CONVOLUTION,            //!< Convolution layer
         kFULLY_CONNECTED = NVDLA_LAYER_TYPE_FULLY_CONNECTED,    //!< Fully connected layer
         kACTIVATION = NVDLA_LAYER_TYPE_ACTIVATION,              //!< Activation layer
@@ -257,6 +258,7 @@ For `m_original_tensor`:
         kELEMENTWISE = NVDLA_LAYER_TYPE_ELEMENTWISE,            //!< Elementwise layer
         kSLICE = NVDLA_LAYER_TYPE_SLICE,                        //!< Slice layer
         lt_kUNKNOWN = NVDLA_LAYER_TYPE_UNKNOWN,
+```
 2. Parameter for different kinds of node (layer):
     2.1 Convolutional:
     ```cpp
