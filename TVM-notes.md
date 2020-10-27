@@ -104,6 +104,34 @@ with tvm.transform.PassContext(opt_level=3, disabled_pass=["AlterOpLayout"]):
             json.dump(codegen, outfile)
 ```
 
+### Standard format of JSON in ARM's Compute Library
+
+JSON representation has two parts: input and node. Input represents the input for the operation while node represents the attributes of the operations. 
+
+```
+Example: Pooling 
+   {
+   input = {
+        "op": "input",
+        "name": "",
+        "attrs": {"shape": [[list(shape)]], "dtype": [[dtype]]}},
+   node = {
+        "op": "kernel",
+        "name": typef,
+        "inputs": [[0, 0, 0]],
+        "attrs": {
+            "num_inputs": "1",
+            "num_outputs": "1",
+            "layout": [["NHWC"]],
+            "shape": [[list(output_shape)]],
+            "dtype": [[dtype]],
+            "padding": [[str(p) for p in padding]],
+            "strides": [[str(s) for s in strides]],
+            "pool_size": [[str(s) for s in sizes]],
+            "ceil_mode": [[str(1 if ceil_mode else 0)]]
+        },
+   }
+ ```
 
 ## TODO:
 1. To define Annotation Rules to describe the supported operators and patterns for NVDLA. 
