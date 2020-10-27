@@ -40,7 +40,7 @@ TVM_FFI=ctypes python3.6 -m pytest -v tests/python/unittest/test_pass_storage_re
 ```
 ## TO generate JSON file using ARM Compute Library:
 
-# Rebuild TVM compiler
+### Rebuild TVM compiler
 
 Change set(USE_ARM_COMPUTE_LIB OFF) to set(USE_ARM_COMPUTE_LIB ON) to enable ARM Compute Libraray backend in the build/config.cmake file. Use following commands to rebuild TVM stack. 
 
@@ -50,7 +50,7 @@ cmake ..
 make -j4
 ```
 
-# Code to dump JSON file
+### Code to dump JSON file
 
 ```
 import tvm
