@@ -38,11 +38,77 @@ make
 # All tests reside in tests folder
 TVM_FFI=ctypes python3.6 -m pytest -v tests/python/unittest/test_pass_storage_rewrite.py
 ```
+## TO generate JSON file using ARM Compute Library:
+
+# Rebuild TVM compiler
+
+Change set(USE_ARM_COMPUTE_LIB OFF) to set(USE_ARM_COMPUTE_LIB ON) to enable ARM Compute Libraray backend in the build/config.cmake file. Use following commands to rebuild TVM stack. 
+
+```
+cd build
+cmake ..
+make -j4
+```
+
+# Code to dump JSON file
+
+```
+import tvm
+from tvm import relay
+from tvm.contrib import util
+from tvm.relay.op.contrib import arm_compute_lib
+
+from itertools import zip_longest, combinations
+import json
+import os
+import warnings
+
+import numpy as np
+
+
+data_type = "float32"
+data_shape = (1, 14, 14, 512)
+strides = (2, 2)
+padding = (0, 0, 0, 0)
+pool_size = (2, 2)
+layout = "NHWC"
+output_shape = (1, 7, 7, 512)
+
+data = relay.var('data', shape=data_shape, dtype=data_type)
+out = relay.nn.max_pool2d(data, pool_size=pool_size, strides=strides, layout=layout, padding=padding)
+module = tvm.IRModule.from_expr(out)
+
+def extract_acl_modules(module):
+    """Get the ACL module(s) from llvm module."""
+    return list(filter(lambda mod: mod.type_key == "arm_compute_lib",
+                       module.get_lib().imported_modules))
+
+target = "llvm -mtriple=aarch64-linux-gnu -mattr=+neon"
+enable_acl = True
+params=None
+tvm_ops=0
+acl_partitions=1
+
+with tvm.transform.PassContext(opt_level=3, disabled_pass=["AlterOpLayout"]):
+    if enable_acl:
+        module = arm_compute_lib.partition_for_arm_compute_lib(module, params)
+    lib = relay.build(module, target=target, params=params)
+    acl_modules = extract_acl_modules(lib)
+    for mod in acl_modules:
+        source = mod.get_source("json")
+        codegen = json.loads(source)["nodes"]
+        codegen_str = json.dumps(codegen, sort_keys=True, indent=2)
+        with open('./tvm/JSON_dump/max_pool2d_readable.json', 'w') as outfile:
+            outfile.write(json.dumps(codegen, sort_keys=True, indent=2))
+        with open('./tvm/JSON_dump/max_pool2d.json', 'w') as outfile:
+            json.dump(codegen, outfile)
+```
+
 
 ## TODO:
 1. To define Annotation Rules to describe the supported operators and patterns for NVDLA. 
 2. To implement NVDLA Codegen to serialize a Relay graph to a JSON representation.
-3. To implement an NVDLA JSON runtime to interpret and execute the serialized JSON graph.
+3. ~~To implement an NVDLA JSON runtime to interpret and execute the serialized JSON graph.~~
 4. To combine the necessary NVDLA APIs (including default compiler and runtime) with the TVM default code.
 5. To test functional verification of the complete flow and target operators.
 
