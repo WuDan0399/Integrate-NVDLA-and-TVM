@@ -38,7 +38,7 @@ make
 # All tests reside in tests folder
 TVM_FFI=ctypes python3.6 -m pytest -v tests/python/unittest/test_pass_storage_rewrite.py
 ```
-## TO generate JSON file using ARM Compute Library:
+## To generate JSON file using ARM Compute Library:
 
 ### Rebuild TVM compiler
 
@@ -132,6 +132,9 @@ Example: Pooling
         },
    }
  ```
+ 
+## Storing network parameters
+We will use Numpy's np.savez command to save dict of numpy arrays. We can refer to https://github.com/rogersce/cnpy to load parameter file in NVDLA. 
 
 ## TODO:
 1. To define Annotation Rules to describe the supported operators and patterns for NVDLA. 
