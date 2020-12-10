@@ -1,9 +1,13 @@
-# Integrate-NVDLA-and-TVM (Not full developed)
+# Integrate-NVDLA-and-TVM (WIP)
 
 Official code for NVDLA software [sw](https://github.com/nvdla/sw). Official document [sw doc](http://nvdla.org/sw/contents.html). 
 
 ## Designed Workflow
-\[Place a figure here\]
+
+![alt text](files/detailed_design.jpg)
+
+First, TVM performs frontend compilation to translate frontend languages such as Caffe to intermediate representation using the existing Relay compiler. Then, TVM’s Bring Your Own Codegen (BYOC) framework infrastructure is used to convert the Relay IR into a json file containing the neural network information. Then, the modified and rebuilt NVDLA compiler accepts the json file as input and outputs a loadable file. Finally, the loadable file and test image are fed to the NVDLA runtime for model inference. 
+
 
 ## Current Progress:
 1. Succesfully run Lenet written in relay on NVDLA hardware simulator.
