@@ -40,8 +40,12 @@ The compiler is in `./out/apps/compiler/nvdla_compiler`, copy libnvdla_compiler.
 `cp <path to sw>/sw/umd/out/core/src/compiler/libnvdla_compiler/libnvdla_compiler.so <path to sw>/sw/umd/out/apps/compiler/nvdla_compiler/`
 
 ## How to Run the Whole Process for Model Inference
-
-1. Use Json file as input and generate loadable file.
+1. Generate a JSON for LeNet architecture using Relay, run
 ```
+python3.6 examples/run_LeNet_Relay.py
+```
+2. Use Json file as input and generate loadable file.
+```
+cd <path to sw>/sw/umd/out/apps/compiler/nvdla_compiler/
 ./nvdla_compiler --jsonfile <path_to_json_file>
 ```
