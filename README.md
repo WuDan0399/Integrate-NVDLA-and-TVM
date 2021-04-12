@@ -47,5 +47,5 @@ python3.6 examples/run_LeNet_Relay.py
 2. Use Json file as input and generate loadable file.
 ```
 cd <path to sw>/sw/umd/out/apps/compiler/nvdla_compiler/
-./nvdla_compiler --jsonfile <path_to_json_file>
+./nvdla_compiler --json_file <path_to_json_file>
 ```
