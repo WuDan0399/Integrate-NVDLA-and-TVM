@@ -1,4 +1,4 @@
-# Integrate-NVDLA-and-TVM (WIP)
+# Integrate-NVDLA-and-TVM (no longer maintained)
 
 Official code for NVDLA software [sw](https://github.com/nvdla/sw). Official document [sw doc](http://nvdla.org/sw/contents.html). 
 
